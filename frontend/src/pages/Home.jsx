@@ -1,44 +1,46 @@
 import {useState, useEffect} from "react";
 import api from "../api";
-import Note from "../components/Note"
+import Comment from "../components/Comment"
 import "../styles/Home.css"
 
 function Home() {
-  const [notes, setNotes] = useState([]);
+  const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
   
   useEffect(() => {
-    getNotes();
+    getComments();
   }, [])
 
-  const getNotes = () => {
+  const getComments = () => {
     api
-      .get("/api/notes/")
+      .get("/api/comments/")
       .then((res) => res.data)
-      .then((data) => { setNotes(data); console.log(data) })
+      .then((data) => { setComments(data); console.log(data) })
       .catch((err) => alert(err));
   };
 
-  const deleteNote = (id) => {
+  const deleteComment = (id) => {
     api
-      .delete(`/api/notes/delete/${id}/`)
+      .delete(`/api/comments/delete/${id}/`)
       .then((res) => {
-        if (res.status === 204) alert("Note deleted!");
-        else alert("Failed to delete note.");
-        getNotes();
+        if (res.status === 204) alert("Comment deleted!");
+        else alert("Failed to delete comment.");
+        getComments();
       })
       .catch((err) => alert(err));
   };
 
-  const createNote = (e) => {
+  const createComment = (e) => {
     e.preventDefault();
     api
-      .post("/api/notes/", { content, title })
+      .post("/api/comments/", { content })
       .then((res) => {
-        if (res.status === 201) alert("Note created!");
-        else alert("Failed to make note.");
-        getNotes();
+        if (res.status === 201) {
+          alert("Comment created!");
+          setContent("");
+        }
+        else alert("Failed to make comment.");
+        getComments();
       })
       .catch((err) => alert(err));
   };
@@ -46,35 +48,31 @@ function Home() {
   return (
     <div>
       <div>
-        <h2>Notes</h2>
-        {notes.map((note) => (
-        <Note note={note} onDelete={deleteNote} key={note.id} />
+        <h2>Today's Question</h2>
+      </div>
+
+      <div>
+        <h2>Create a Comment</h2>
+        <form onSubmit={createComment}>
+          <label htmlFor="content">Content:</label>
+          <br />
+          <textarea
+            id="content"
+            name="content"
+            required
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          ></textarea>
+          <br />
+          <input type="submit" value="Submit"></input>
+        </form>
+      </div>
+      <div>
+        <h2>Comments</h2>
+        {comments.map((comment) => (
+        <Comment comment={comment} onDelete={deleteComment} key={comment.id} />
         ))}
       </div>
-      <h2>Create a Note</h2>
-      <form onSubmit={createNote}>
-        <label htmlFor="title">Title:</label>
-        <br />
-        <input
-          type="text"
-          id="title"
-          name="title"
-          required
-          onChange={(e) => setTitle(e.target.value)}
-          value={title}
-        />
-        <label htmlFor="content">Content:</label>
-        <br />
-        <textarea
-          id="content"
-          name="content"
-          required
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        ></textarea>
-        <br />
-        <input type="submit" value="Submit"></input>
-      </form>
     </div>
   )
 }
