@@ -6,10 +6,19 @@ import "../styles/Home.css"
 function Home() {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
   
   useEffect(() => {
+    getCurrentUser();
     getComments();
   }, [])
+
+  const getCurrentUser = () => {
+    api
+      .get("/api/current_user/")
+      .then((res) => setCurrentUser(res.data))
+      .catch((err) => console.error("Failed to fetch current user:", err)); 
+  };
 
   const getComments = () => {
     api
@@ -70,7 +79,7 @@ function Home() {
       <div>
         <h2>Comments</h2>
         {comments.map((comment) => (
-        <Comment comment={comment} onDelete={deleteComment} key={comment.id} />
+        <Comment comment={comment} onDelete={deleteComment} currentUser={currentUser} key={comment.id} />
         ))}
       </div>
     </div>

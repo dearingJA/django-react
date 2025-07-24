@@ -15,7 +15,16 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    replies = serializers.SerializerMethodField()
+    author = UserSerializer(read_only=True)
+
     class Meta:
         model = Comment
-        fields = ["id", "content", "created_at", "author"]
+        fields = ["id", "content", "created_at", "author", "parent", "replies"]
         extra_kwargs = {"author": {"read_only": True}}
+
+    def get_replies(self, obj):
+        # rec serialize replies
+        if obj.replies.exists():
+            return CommentSerializer(obj.replies.all(), many=True, context=self.context).data
+        return []

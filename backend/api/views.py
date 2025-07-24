@@ -1,24 +1,31 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
 from .serializers import UserSerializer, CommentSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from .models import Comment
 
 
-class CommentListCreate(generics.ListCreateAPIView):
-    serializer_class = CommentSerializer
+class CurrentUserView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_object(self):
+        return self.request.user
+
+class CommentListCreate(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_queryset(self):
-        user = self.request.user
-        return Comment.objects.filter(author=user)
+        return Comment.objects.all()
 
     def perform_create(self, serializer):
-        if serializer.is_valid():
+        try:
             serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
+        except Exception as e:
+            print("Error in perform_create:", e)
+            raise e  # re-raise so you get full traceback in logs
+
 
 
 class CommentDelete(generics.DestroyAPIView):
