@@ -1,8 +1,15 @@
 .comment-container {
+  display: flex;
+  flex-direction: column;
   padding: 10px;
   margin: 20px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.comment-info {
+  display: flex;
+  flex-direction: column;
 }
 
 .comment-author {
@@ -21,16 +28,49 @@
   font-size: 0.8rem;
 }
 
-.delete-button {
-  background-color: #f44336;
+.button-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.comment-button {
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  margin-left: .25rem;
   transition: background-color 0.3s;
 }
 
+.like-button {
+  background-color: #669966;
+}
+
+.like-button:hover {
+  background-color: #388E3C;
+}
+
+.dislike-button {
+  background-color: #6495ED;
+}
+
+.dislike-button:hover {
+  background-color: #0000FF;
+}
+
+.reply-button {
+  background-color: #CCCCCC;
+}
+
+.reply-button:hover {
+  background-color: #808080;
+}
+
+.delete-button {
+  background-color: #F44336;
+}
+
 .delete-button:hover {
-  background-color: #d32f2f; 
+  background-color: #D32F2F; 
 }
