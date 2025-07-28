@@ -12,9 +12,11 @@ function Comment({ comment, onDelete, currentUser }) {
   return (
     <div className="comment-container">
       <div className="comment-info">
-        <p className="comment-author">{comment.author.username}</p>
-        <p className="comment-content">{comment.content}</p>
-        <p className="comment-date">{formattedDate}</p>
+        <div className="comment-author-date">
+          <span className="comment-author">{comment.author.username}</span>
+          <span className="comment-date">{formattedDate}</span>
+        </div>
+          <p className="comment-content">{comment.content}</p>
       </div>
       <div className="button-container">
         <button className="comment-button like-button">

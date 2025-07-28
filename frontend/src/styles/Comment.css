@@ -10,22 +10,31 @@
 .comment-info {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .comment-author {
   font-weight: 600;
   color: #222;
-  margin-bottom: 5px;
   font-size: 1rem;
-}
-
-.comment-content {
-  color: #666;
+  margin: 0;
 }
 
 .comment-date {
   color: #999;
   font-size: 0.8rem;
+  margin: 0;
+}
+
+.comment-author-date {
+  display: flex;
+  display: row;
+}
+
+
+.comment-content {
+  color: #666;
+  margin: 0;
 }
 
 .button-container {
@@ -39,6 +48,7 @@
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  margin-top: .25rem;
   margin-left: .25rem;
   transition: background-color 0.3s;
 }
