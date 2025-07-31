@@ -54,6 +54,14 @@ function Home() {
       .catch((err) => alert(err));
   };
 
+  const updateComment = (id, updatedFields) => {
+    setComments(prev => 
+      prev.map(comment =>
+        comment.id === id ? { ...comment, ...updatedFields } : comment
+      )
+    );
+  }
+
   return (
     <div>
       <div>
@@ -79,7 +87,13 @@ function Home() {
       <div>
         <h2>Comments</h2>
         {comments.map((comment) => (
-        <Comment comment={comment} onDelete={deleteComment} currentUser={currentUser} key={comment.id} />
+        <Comment
+            comment={comment} 
+            onDelete={deleteComment} 
+            currentUser={currentUser} 
+            key={comment.id}
+            onUpdate={updateComment}
+          />
         ))}
       </div>
     </div>

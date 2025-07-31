@@ -3,6 +3,8 @@ from rest_framework import generics
 from .serializers import UserSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from .models import Comment
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 class CurrentUserView(generics.RetrieveAPIView):
@@ -11,6 +13,7 @@ class CurrentUserView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
 
 class CommentListCreate(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
@@ -26,6 +29,33 @@ class CommentListCreate(generics.ListCreateAPIView):
             print("Error in perform_create:", e)
             raise e  # re-raise so you get full traceback in logs
 
+
+class LikeComment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            comment = Comment.objects.get(pk=pk)
+            comment.likes += 1
+            comment.save()
+            return Response({'likes': comment.likes})
+        except Exception as e:
+            print("Error in perform_create:", e)
+            raise e
+
+
+class DislikeComment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            comment = Comment.objects.get(pk=pk)
+            comment.dislikes += 1
+            comment.save()
+            return Response({'dislikes': comment.dislikes})
+        except Exception as e:
+            print("Error in perform_create:", e)
+            raise e
 
 
 class CommentDelete(generics.DestroyAPIView):

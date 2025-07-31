@@ -20,7 +20,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["id", "content", "created_at", "author", "parent", "replies"]
+        fields = ["id", "content", "created_at", "likes", "dislikes", "author", "parent", "replies"]
         extra_kwargs = {"author": {"read_only": True}}
 
     def get_replies(self, obj):
