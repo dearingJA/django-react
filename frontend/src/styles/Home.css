@@ -1,9 +1,7 @@
-/* Container for the whole page */
 div {
   font-family: Arial, sans-serif;
 }
 
-/* Styles for the notes section */
 .notes-section {
   margin-bottom: 2rem;
 }
@@ -13,7 +11,6 @@ div {
   font-size: 24px;
 }
 
-/* Styles for individual notes - assuming your Note component has some container element */
 .note {
   background-color: #f9f9f9;
   border-left: 5px solid #007bff;
@@ -22,13 +19,12 @@ div {
   border-radius: 5px;
 }
 
-/* Styles for the form section */
 form {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
+  max-width: 700px;
   margin: auto;
 }
 

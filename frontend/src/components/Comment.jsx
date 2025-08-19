@@ -1,8 +1,11 @@
-import React from "react"
+import React, { useState } from "react"
 import api from "../api"
 import "../styles/Comment.css"
 
-function Comment({ comment, onDelete, currentUser, onUpdate }) {
+function Comment({ comment, onDelete, currentUser, onUpdate, onReply }) {
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyText, setReplyText] = useState("");
+
   const formattedDate = new Date(comment.created_at).toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
@@ -27,6 +30,19 @@ function Comment({ comment, onDelete, currentUser, onUpdate }) {
     }
   };
 
+  const handleReply = async () => {
+    if (!replyText.trim()) return;
+
+    try {
+      await onReply(comment.id, replyText);
+
+      setReplyText("");
+      setIsReplying(false);
+    } catch (err) {
+      console.error("Failed to reply: ", err);
+    }
+  };
+
   return (
     <div className="comment-container">
       <div className="comment-info">
@@ -43,15 +59,43 @@ function Comment({ comment, onDelete, currentUser, onUpdate }) {
         <button className="comment-button dislike-button" onClick={handleDislike}>
           Dislike ({comment.dislikes})
         </button>
-        <button className="comment-button reply-button">
+        <button className="comment-button reply-button" onClick={() => setIsReplying(!isReplying)}>
           Reply
         </button>
         {currentUser.id === comment.author.id && (
-          <button className="comment-button delete-button" onClick= {() => onDelete(comment.id)}>
+          <button className="comment-button delete-button" onClick={() => onDelete(comment.id)}>
             Delete
           </button>
         )}
       </div>
+      {isReplying && (
+        <div className="reply-box">
+          <textarea
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder="Write a reply..."
+            rows="2"
+          />
+          <button className="comment-button send-reply" onClick={handleReply}>
+            Submit
+          </button>
+        </div>
+      )}
+
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="replies-container">
+          {comment.replies.map((reply) => (
+            <Comment
+              key={reply.id}
+              comment={reply}
+              onDelete={onDelete}
+              currentUser={currentUser}
+              onUpdate={onUpdate}
+              onReply={onReply}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

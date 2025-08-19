@@ -55,17 +55,47 @@ function Home() {
   };
 
   const updateComment = (id, updatedFields) => {
-    setComments(prev => 
-      prev.map(comment =>
-        comment.id === id ? { ...comment, ...updatedFields } : comment
-      )
-    );
-  }
+    const updateRecursively = (comments) =>
+      comments.map((comment) => {
+        if (comment.id === id) {
+          return { ...comment, ...updatedFields };
+        }
+        if (comment.replies && comment.replies.length > 0) {
+          return { ...comment, replies: updateRecursively(comment.replies) };
+        }
+        return comment;
+      });
+
+    setComments((prev) => updateRecursively(prev));
+  };
+
+  const replyToComment = async (parentId, text) => {
+    try {
+      const res = await api.post("/api/comments/", {
+        content: text,
+        parent: parentId,
+      });
+
+      const newReply = res.data;
+
+      const addReply = (comments) =>
+        comments.map((c) =>
+          c.id === parentId
+            ? { ...c, replies: [...(c.replies || []), newReply] }
+            : { ...c, replies: addReply(c.replies || []) }
+        );
+
+      setComments((prev) => addReply(prev));
+    } catch (err) {
+      console.error("Failed to reply:", err);
+    }
+  }; 
 
   return (
     <div>
       <div>
         <h2>Today's Question</h2>
+        <p>Sample Question: Which team is going to win the Super Bowl?</p>
       </div>
 
       <div>
@@ -77,6 +107,7 @@ function Home() {
             id="content"
             name="content"
             required
+            placeholder="Respond to the daily question..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
           ></textarea>
@@ -86,13 +117,16 @@ function Home() {
       </div>
       <div>
         <h2>Comments</h2>
-        {comments.map((comment) => (
+        {comments
+          .filter((c) => !c.parent)
+          .map((comment) => (
         <Comment
             comment={comment} 
             onDelete={deleteComment} 
             currentUser={currentUser} 
             key={comment.id}
             onUpdate={updateComment}
+            onReply={replyToComment}
           />
         ))}
       </div>
