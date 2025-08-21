@@ -7,11 +7,21 @@ function Home() {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
+  const [question, setQuestion] = useState("");
   
   useEffect(() => {
     getCurrentUser();
     getComments();
-  }, [])
+    getQuestion();
+  }, []);
+
+  const getQuestion = () => {
+    api
+      .get("/api/daily_question/")
+      .then((res) => setQuestion(res.data.question))
+      .catch((err) => console.error("Failed to fetch daily question:", err));
+  }; 
+
 
   const getCurrentUser = () => {
     api
@@ -95,7 +105,7 @@ function Home() {
     <div>
       <div>
         <h2>Today's Question</h2>
-        <p>Sample Question: Which team is going to win the Super Bowl?</p>
+        <p>{question || "Loading today's question..."}</p>
       </div>
 
       <div>
